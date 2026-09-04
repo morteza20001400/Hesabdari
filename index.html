@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1565c0">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+<title>مدیریت مالی پروژه</title>
+</head>
+<body>
+<header>
+  <div>
+    <h1>مدیریت مالی پروژه</h1>
+    <small>داشبورد مدیریتی</small>
+  </div>
+  <button id="installBtn" hidden>نصب برنامه</button>
+</header>
+
+<main>
+<section class="cards">
+  <article class="card green"><span>سود پیش‌بینی‌شده</span><b id="profit">۰</b><small>تومان</small></article>
+  <article class="card blue"><span>پول نقد و بانک</span><b id="cash">۰</b><small>تومان</small></article>
+  <article class="card purple"><span>مانده وام</span><b id="loan">۰</b><small>تومان</small></article>
+  <article class="card orange"><span>مطالبات</span><b id="receivable">۰</b><small>تومان</small></article>
+</section>
+
+<section class="panel">
+<h2>🏗️ پروژه‌ها</h2>
+<div id="projects"></div>
+<button class="primary" onclick="addProject()">＋ پروژه جدید</button>
+</section>
+
+<section class="panel">
+<h2>📊 بهای تمام‌شده و پیش‌بینی سود</h2>
+<div class="grid">
+<label>مبلغ قرارداد <input id="contract" type="number" value="2000000000"></label>
+<label>هزینه تا امروز <input id="spent" type="number" value="850000000"></label>
+<label>هزینه باقی‌مانده <input id="remaining" type="number" value="700000000"></label>
+<label>پیشرفت فیزیکی ٪ <input id="progress" type="number" value="46"></label>
+<label>بودجه پروژه <input id="budget" type="number" value="1600000000"></label>
+</div>
+<div class="result" id="forecast"></div>
+</section>
+
+<section class="panel">
+<h2>💵 جریان نقدی</h2>
+<div class="grid">
+<label>موجودی فعلی <input id="cashInput" type="number" value="200000000"></label>
+<label>دریافتی از کارفرما <input id="income" type="number" value="0"></label>
+<label>وام آزادشده <input id="loanInput" type="number" value="0"></label>
+<label>پرداخت‌های آینده <input id="futurePay" type="number" value="300000000"></label>
+<label>مطالبات قابل دریافت <input id="receivableInput" type="number" value="150000000"></label>
+<label>بدهی‌ها <input id="debt" type="number" value="0"></label>
+</div>
+<div class="result" id="cashflow"></div>
+</section>
+
+<section class="panel">
+<h2>⚠️ هشدارها</h2>
+<div id="alerts"></div>
+</section>
+
+<section class="panel">
+<h2>📚 تفکیک حساب‌ها</h2>
+<div class="separate">
+  <div>🏗️ پروژه‌ها <b>مستقل</b></div>
+  <div>🌳 باغ <b>مستقل</b></div>
+  <div>👤 شخصی <b>مستقل</b></div>
+  <div>🏦 بانک و وام <b>مستقل</b></div>
+</div>
+</section>
+</main>
+
+<footer>اطلاعات این نسخه فقط روی همین دستگاه ذخیره می‌شود.</footer>
+<script src="app.js"></script>
+</body>
+</html>
