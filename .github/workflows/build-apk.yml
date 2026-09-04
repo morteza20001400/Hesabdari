@@ -37,6 +37,16 @@ jobs:
           cp manifest.json www/
           cp sw.js www/
 
+      - name: Create Capacitor config
+        run: |
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.hesabdari.app",
+            "appName": "حسابداری",
+            "webDir": "www"
+          }
+          EOF
+
       - name: Add Android platform
         run: npx cap add android
 
