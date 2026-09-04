@@ -1,0 +1,8 @@
+{
+  "appId": "com.hesabdari.app",
+  "appName": "حسابداری",
+  "webDir": ".",
+  "server": {
+    "androidScheme": "https"
+  }
+}
