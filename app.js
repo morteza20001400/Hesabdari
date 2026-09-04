@@ -1,0 +1,21 @@
+const $=x=>document.getElementById(x), F=n=>new Intl.NumberFormat('fa-IR').format(Math.round(+n||0));
+const TN={income:'درآمد',expense:'هزینه',receipt:'دریافت',payment:'پرداخت',loan_in:'دریافت وام',loan_out:'بازپرداخت وام',receivable:'طلب',debt:'بدهی',farm:'باغ/کشاورزی'};
+let tx=JSON.parse(localStorage.getItem('tx')||'[]'), projects=JSON.parse(localStorage.getItem('projects')||'[]');
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function cash(t){return ['income','receipt','loan_in'].includes(t.type)?t.amount:['expense','payment','loan_out'].includes(t.type)?-t.amount:0}
+function today(){return new Date().toISOString().slice(0,10)}
+function init(){if(!$('date').value)$('date').value=today();opts();render();summary()}
+function opts(){let p=projects.map(x=>`<option>${esc(x)}</option>`).join('');$('project').innerHTML='<option value="">عمومی</option>'+p;$('filterProject').innerHTML='<option value="">همه پروژه‌ها</option>'+p;$('projects').innerHTML=projects.length?projects.map((x,i)=>`<div class="project">🏗️ ${esc(x)} <button onclick="delProject(${i})">حذف</button></div>`).join(''):'<p class="empty">پروژه‌ای ثبت نشده است.</p>'}
+function saveTx(){let amount=+$('amount').value;if(amount<=0){$('msg').innerHTML='<div class="bad">مبلغ را وارد کنید.</div>';return}
+tx.unshift({id:Date.now(),type:$('type').value,project:$('project').value,amount,date:$('date').value||today(),party:$('party').value,desc:$('desc').value});
+localStorage.setItem('tx',JSON.stringify(tx));$('amount').value='';$('party').value='';$('desc').value='';render();summary();$('msg').innerHTML='<div class="ok">✅ اطلاعات ثبت شد.</div>';setTimeout(()=>$('msg').innerHTML='',2000)}
+function render(){let f=$('filter').value,p=$('filterProject').value,a=tx.filter(x=>(!f||x.type==f)&&(!p||x.project==p));$('list').innerHTML=a.length?a.map(x=>`<div class="tx"><b>${TN[x.type]}</b><span>${esc(x.date)}</span><strong>${cash(x)>0?'+':cash(x)<0?'−':''}${F(x.amount)} تومان</strong><small>${x.project?'🏷️ '+esc(x.project):''} ${x.party?'👤 '+esc(x.party):''}<br>${esc(x.desc)}</small><button onclick="delTx(${x.id})">حذف</button></div>`).join(''):'<p class="empty">هنوز اطلاعاتی ثبت نشده است.</p>'}
+function summary(){let inc=0,exp=0,ca=0,rec=0,debt=0;tx.forEach(x=>{ca+=cash(x);if(['income','receipt'].includes(x.type))inc+=x.amount;if(['expense','payment','farm'].includes(x.type))exp+=x.amount;if(x.type=='receivable')rec+=x.amount;if(x.type=='debt')debt+=x.amount});
+$('cash').textContent=F(ca);$('incomeTotal').textContent=F(inc);$('expenseTotal').textContent=F(exp);$('receivableTotal').textContent=F(rec);
+$('reportBox').innerHTML=`<div class="report"><div>جمع درآمد: <b>${F(inc)}</b> تومان</div><div>جمع هزینه: <b>${F(exp)}</b> تومان</div><div>خالص: <b>${F(inc-exp)}</b> تومان</div><div>مانده نقدی: <b>${F(ca)}</b> تومان</div><div>مطالبات: <b>${F(rec)}</b> تومان</div><div>بدهی: <b>${F(debt)}</b> تومان</div></div>`}
+function delTx(id){if(confirm('این ثبت حذف شود؟')){tx=tx.filter(x=>x.id!=id);localStorage.setItem('tx',JSON.stringify(tx));render();summary()}}
+function addProject(){let x=prompt('نام پروژه:');if(x&&x.trim()&&!projects.includes(x.trim())){projects.push(x.trim());localStorage.setItem('projects',JSON.stringify(projects));opts()}}
+function delProject(i){if(confirm('پروژه حذف شود؟ سوابق مالی حذف نمی‌شود.')){projects.splice(i,1);localStorage.setItem('projects',JSON.stringify(projects));opts();render()}}
+function backup(){let d={version:2,date:new Date().toISOString(),transactions:tx,projects};let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}));a.download='hesabdari-backup.json';a.click()}
+function restore(e){let r=new FileReader;r.onload=()=>{try{let d=JSON.parse(r.result);if(!Array.isArray(d.transactions))throw 0;if(confirm('اطلاعات فعلی جایگزین شود؟')){tx=d.transactions;projects=Array.isArray(d.projects)?d.projects:[];localStorage.setItem('tx',JSON.stringify(tx));localStorage.setItem('projects',JSON.stringify(projects));opts();render();summary();alert('بازیابی انجام شد.')}}catch(_){alert('فایل پشتیبان معتبر نیست.')}};r.readAsText(e.target.files[0])}
+function go(id){$(id).scrollIntoView({behavior:'smooth'})} init();
